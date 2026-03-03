@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <lvgl.h>
+#include <ui\src\ui.h>
 
 // 屏幕尺寸（应与你的 TFT_eSPI 配置一致）
 #define TFT_HOR_RES  320
@@ -77,25 +78,7 @@ void setup() {
 
     // 创建简单 UI
     // 1. 创建一个屏幕（如果不显式创建，LVGL 会使用默认屏幕）
-    lv_obj_t *scr = lv_scr_act();
-
-    // 2. 创建一个标签，显示 “Hello LVGL”
-    lv_obj_t *label1 = lv_label_create(scr);
-    lv_label_set_text(label1, "Hello LVGL");
-    lv_obj_align(label1, LV_ALIGN_CENTER, 0, -30);
-
-    // 3. 创建一个按钮
-    lv_obj_t *btn = lv_btn_create(scr);
-    lv_obj_set_size(btn, 120, 50);
-    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 30);
-
-    // 4. 在按钮上创建一个标签
-    lv_obj_t *btn_label = lv_label_create(btn);
-    lv_label_set_text(btn_label, "Click me");
-    lv_obj_center(btn_label);
-
-    // 5. 为按钮绑定事件回调，并将 label1 作为用户数据传入（用于更新文本）
-    lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, label1);
+    ui_init();
 
     Serial.println("UI created");
 }
