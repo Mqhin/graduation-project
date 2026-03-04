@@ -43,6 +43,7 @@ LV_IMG_DECLARE(ui_img_788129694);    // assets/右转向灯.png
 LV_IMG_DECLARE(ui_img_2125033867);    // assets/左转向灯.png
 LV_IMG_DECLARE(ui_img_2125878674);    // assets/近光灯.png
 LV_IMG_DECLARE(ui_img_934278156);    // assets/手刹灯.png
+LV_IMG_DECLARE(ui_img_314426297);    // assets/远光灯.png
 
 // UI INIT
 void ui_init(void);

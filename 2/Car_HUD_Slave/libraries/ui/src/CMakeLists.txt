@@ -7,6 +7,7 @@ SET(SOURCES ui_comp_mabiao.c
     ui_img_788129694.c
     ui_img_2125033867.c
     ui_img_2125878674.c
-    ui_img_934278156.c)
+    ui_img_934278156.c
+    ui_img_314426297.c)
 
 add_library(ui ${SOURCES})

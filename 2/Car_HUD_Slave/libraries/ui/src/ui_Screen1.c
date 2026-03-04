@@ -13,6 +13,7 @@ lv_obj_t * ui_Image7 = NULL;
 lv_obj_t * ui_Image8 = NULL;
 lv_obj_t * ui_Image9 = NULL;
 lv_obj_t * ui_Image10 = NULL;
+lv_obj_t * ui_Image1 = NULL;
 // event funtions
 
 // build funtions
@@ -97,6 +98,17 @@ void ui_Screen1_screen_init(void)
     lv_obj_clear_flag(ui_Image10, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_Image10, 150);
 
+    ui_Image1 = lv_img_create(ui_Screen1);
+    lv_img_set_src(ui_Image1, &ui_img_314426297);
+    lv_obj_set_width(ui_Image1, LV_SIZE_CONTENT);   /// 100
+    lv_obj_set_height(ui_Image1, LV_SIZE_CONTENT);    /// 100
+    lv_obj_set_x(ui_Image1, -126);
+    lv_obj_set_y(ui_Image1, 94);
+    lv_obj_set_align(ui_Image1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_zoom(ui_Image1, 140);
+
 }
 
 void ui_Screen1_screen_destroy(void)
@@ -112,5 +124,6 @@ void ui_Screen1_screen_destroy(void)
     ui_Image8 = NULL;
     ui_Image9 = NULL;
     ui_Image10 = NULL;
+    ui_Image1 = NULL;
 
 }

@@ -1,7 +1,8 @@
-#include <Arduino.h>
+// #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui/src/ui.h>   // 根据实际路径调整
+#include "car_control.h"
 
 // ========== ESP-NOW 相关头文件（已注释，需要时取消） ==========
 // #include <WiFi.h>
@@ -16,17 +17,12 @@ static lv_color_t buf[TFT_HOR_RES * 10];
 TFT_eSPI tft = TFT_eSPI();
 
 // UI 控件指针
-static lv_obj_t* speedArc = NULL;
-static lv_obj_t* speedLabel = NULL;
-static lv_obj_t* leftIndicator = NULL;
-static lv_obj_t* rightIndicator = NULL;
-static lv_obj_t* nearLight = NULL;
-static lv_obj_t* farLight = NULL;
-bool nearActive = false;   // 近光是否开启
-bool farActive = false;    // 远光是否开启
-
-
-
+lv_obj_t* speedArc = NULL;
+lv_obj_t* speedLabel = NULL;
+lv_obj_t* leftIndicator = NULL;
+lv_obj_t* rightIndicator = NULL;
+lv_obj_t* headlight = NULL;
+lv_obj_t* stop = NULL;
 
 // 指示灯状态
 bool leftActive = false;
@@ -34,6 +30,8 @@ bool rightActive = false;
 bool leftState = false;
 bool rightState = false;
 unsigned long lastToggle = 0;
+bool nearActive = false;   // 近光是否开启
+bool farActive = false;    // 远光是否开启
 
 // ========== ESP-NOW 全局变量（已注释） ==========
 /*
@@ -118,6 +116,9 @@ void toggleIndicator(lv_obj_t* ind, bool* state) {
     lv_refr_now(NULL);               // 强制立即刷新
 }
 
+// 函数声明
+
+
 void setup() {
     Serial.begin(115200);
     delay(1000);
@@ -166,17 +167,16 @@ void setup() {
     speedLabel = ui_MABIAO;
     leftIndicator = ui_Image8;
     rightIndicator = ui_Image7;
-    nearLight = ui_Image9;   // 请替换为实际名称
-    //farLight = ui_Image_far;     // 请替换为实际名称
+    headlight = ui_Image9;   // 替换为您的实际图片控件名
+    stop = ui_Image10;
 
     // 打印指针
     Serial.printf("speedArc: %p\n", speedArc);
     Serial.printf("speedLabel: %p\n", speedLabel);
     Serial.printf("leftIndicator: %p\n", leftIndicator);
 
-    // 初始显示车速 90
-    updateSpeed(90);
-
+    // 初始显示车速 0
+    updateSpeed(0);
     Serial.println("就绪，输入命令：SPEED:数值  LEFT  RIGHT  OFF");
 
     // 打印指示灯位置和尺寸
@@ -186,12 +186,6 @@ void setup() {
     Serial.printf("rightIndicator: pos=(%d,%d), size=%dx%d\n", 
               lv_obj_get_x(rightIndicator), lv_obj_get_y(rightIndicator),
               lv_obj_get_width(rightIndicator), lv_obj_get_height(rightIndicator));
-
-    // 强制设置指示灯背景色（便于观察）
-//     lv_obj_set_style_bg_color(leftIndicator, lv_color_hex(0xFF0000), 0);
-//     lv_obj_set_style_bg_opa(leftIndicator, LV_OPA_COVER, 0);
-//     lv_obj_set_style_bg_color(rightIndicator, lv_color_hex(0x00FF00), 0);
-//     lv_obj_set_style_bg_opa(rightIndicator, LV_OPA_COVER, 0);
  }
 
 void loop() {
@@ -254,66 +248,47 @@ void loop() {
     */
 
     // 处理串口命令（当前主要调试方式）
-    if (Serial.available()) {
-        String cmd = Serial.readStringUntil('\n');
-        cmd.trim();
-        if (cmd.length() == 0) return;
+    // 处理串口命令
+if (Serial.available()) {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();
+    if (cmd.length() == 0) return;
 
-        Serial.print("收到命令: ");
-        Serial.println(cmd);
+    Serial.print("收到命令: ");
+    Serial.println(cmd);
 
-        if (cmd.startsWith("SPEED:")) {
-            int speed = cmd.substring(6).toInt();
-            updateSpeed(speed);
-        }
-        else if (cmd.equals("LEFT")) {
-            leftActive = true;
-            rightActive = false;
-            rightState = false;
-            lv_obj_add_flag(rightIndicator, LV_OBJ_FLAG_HIDDEN);
-            lv_timer_handler();
-            Serial.println("左转向灯开启");
-        }
-        else if (cmd.equals("RIGHT")) {
-            rightActive = true;
-            leftActive = false;
-            leftState = false;
-            lv_obj_add_flag(leftIndicator, LV_OBJ_FLAG_HIDDEN);
-            lv_timer_handler();
-            Serial.println("右转向灯开启");
-        }
-        else if (cmd.equals("OFF")) {
-            leftActive = false;
-            rightActive = false;
-            leftState = false;
-            rightState = false;
-            lv_obj_add_flag(leftIndicator, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(rightIndicator, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(nearLight, LV_OBJ_FLAG_HIDDEN);
-            //lv_obj_add_flag(farLight, LV_OBJ_FLAG_HIDDEN);
-            lv_refr_now(NULL);   // 强制刷新，确保立即隐藏
-            Serial.println("所有指示灯关闭");
-        }
-        else if (cmd.equals("NEAR")) {
-            nearActive = true;
-            farActive = false;
-            lv_obj_clear_flag(nearLight, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(farLight, LV_OBJ_FLAG_HIDDEN);
-            lv_refr_now(NULL);
-            Serial.println("近光灯开启");
-        }
-        else {
-            Serial.println("未知命令");
-        }
+    if (cmd.startsWith("SPEED:")) {
+        int speed = cmd.substring(6).toInt();
+        handleSpeed(speed);
     }
+    else if (cmd.equals("LEFT")) {
+        handleLeft();
+    }
+    else if (cmd.equals("RIGHT")) {
+        handleRight();
+    }
+    else if (cmd.equals("OFF")) {
+        handleOff();
+    }
+    else if (cmd.equals("NEAR")) {
+        handleNear();
+    }
+    else if (cmd.equals("FAR")) {
+        handleFar();
+    }
+    else if (cmd.equals("START")) {
+        handleStart();
+    }
+    else if (cmd.equals("STOP")) {
+        handleStop();
+    }
+    else {
+        Serial.println("未知命令");
+    }
+}
 
     // 指示灯闪烁
-    if (millis() - lastToggle >= 500) {
-        lastToggle = millis();
-        // Serial.printf("闪烁: leftActive=%d, leftState=%d\n", leftActive, leftState);
-        if (leftActive) toggleIndicator(leftIndicator, &leftState);
-        if (rightActive) toggleIndicator(rightIndicator, &rightState);
-    }
+    car_hud_blink_update();
 
     lv_timer_handler();
     delay(5);
