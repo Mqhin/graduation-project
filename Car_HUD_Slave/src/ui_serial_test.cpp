@@ -20,6 +20,13 @@ static lv_obj_t* speedArc = NULL;
 static lv_obj_t* speedLabel = NULL;
 static lv_obj_t* leftIndicator = NULL;
 static lv_obj_t* rightIndicator = NULL;
+static lv_obj_t* nearLight = NULL;
+static lv_obj_t* farLight = NULL;
+bool nearActive = false;   // 近光是否开启
+bool farActive = false;    // 远光是否开启
+
+
+
 
 // 指示灯状态
 bool leftActive = false;
@@ -159,6 +166,8 @@ void setup() {
     speedLabel = ui_MABIAO;
     leftIndicator = ui_Image8;
     rightIndicator = ui_Image7;
+    nearLight = ui_Image9;   // 请替换为实际名称
+    //farLight = ui_Image_far;     // 请替换为实际名称
 
     // 打印指针
     Serial.printf("speedArc: %p\n", speedArc);
@@ -280,8 +289,18 @@ void loop() {
             rightState = false;
             lv_obj_add_flag(leftIndicator, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(rightIndicator, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(nearLight, LV_OBJ_FLAG_HIDDEN);
+            //lv_obj_add_flag(farLight, LV_OBJ_FLAG_HIDDEN);
             lv_refr_now(NULL);   // 强制刷新，确保立即隐藏
             Serial.println("所有指示灯关闭");
+        }
+        else if (cmd.equals("NEAR")) {
+            nearActive = true;
+            farActive = false;
+            lv_obj_clear_flag(nearLight, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(farLight, LV_OBJ_FLAG_HIDDEN);
+            lv_refr_now(NULL);
+            Serial.println("近光灯开启");
         }
         else {
             Serial.println("未知命令");
@@ -291,7 +310,7 @@ void loop() {
     // 指示灯闪烁
     if (millis() - lastToggle >= 500) {
         lastToggle = millis();
-        Serial.printf("闪烁: leftActive=%d, leftState=%d\n", leftActive, leftState);
+        // Serial.printf("闪烁: leftActive=%d, leftState=%d\n", leftActive, leftState);
         if (leftActive) toggleIndicator(leftIndicator, &leftState);
         if (rightActive) toggleIndicator(rightIndicator, &rightState);
     }
