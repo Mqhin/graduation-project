@@ -1,0 +1,16 @@
+{
+  "codename": "Font1JIANT3",
+  "ttf_path": "/assets/AlimamaShuHeiTi-Bold.otf",
+  "bin_path": "/assets\\ui_font_Font1JIANT3.bin",
+  "c_path": "/assets\\ui_font_Font1JIANT3.c",
+  "cfg_path": "/assets\\ui_font_Font1JIANT3.fcfg",
+  "size": 16,
+  "bpp": 4,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "中文简体大小天气地图咸宁晴多云小雨阴地点温湿度：实况预报周一二三四音量控制音乐湖北省咸安区关于日今风力风向五六湿度级明星期小大中多少左转右转启动停止远光灯近光灯",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

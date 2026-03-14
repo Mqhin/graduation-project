@@ -1,0 +1,16 @@
+{
+  "codename": "Font1JIANT",
+  "ttf_path": "/assets/AlimamaFangYuanTiVF-Thin.ttf",
+  "bin_path": "/assets\\ui_font_Font1JIANT.bin",
+  "c_path": "/assets\\ui_font_Font1JIANT.c",
+  "cfg_path": "/assets\\ui_font_Font1JIANT.fcfg",
+  "size": 16,
+  "bpp": 8,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "中文简体大小主控开发平台",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}
