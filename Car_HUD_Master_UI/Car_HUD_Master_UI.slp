@@ -1,6 +1,6 @@
 {
-    "uiExportFolderPath": "D:/ESP32-project/LVGL_UI/esp32_ui/./libraries/ui/src",
-    "projectExportFolderPath": "D:/ESP32-project/LVGL_UI/esp32_ui",
+    "uiExportFolderPath": "D:/graduation project/1/esp32_ui/./libraries/ui/src",
+    "projectExportFolderPath": "D:/graduation project/1/esp32_ui",
     "drive_stdio": "-",
     "drive_stdio_path": "",
     "drive_posix": "-",

@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <esp_now.h>
 #include "commands.h"            // 公共指令定义
+#include <esp_wifi.h>            // 添加此头文件以使用 esp_wifi_set_channel
 
 // 屏幕尺寸（必须与 TFT_eSPI 配置一致）
 #define TFT_HOR_RES  320
@@ -90,6 +91,10 @@ void setup() {
     WiFi.mode(WIFI_STA);
     Serial.print("副屏 MAC 地址: ");
     Serial.println(WiFi.macAddress());
+
+    // 强制设置信道与主机一致（根据主机日志，信道为11）
+    esp_wifi_set_channel(11, WIFI_SECOND_CHAN_NONE);
+    Serial.println("从机已设置信道为11");
 
     // 初始化 ESP-NOW
     if (esp_now_init() != ESP_OK) {
@@ -204,6 +209,12 @@ void loop() {
             case CMD_ALL_OFF:
                 handleOff();
                 break;
+            case CMD_START:
+                handleStart();
+                break;
+            case CMD_STOP:
+                handleStop();
+                break;    
             default:
                 Serial.println("未知 ESP-NOW 命令");
                 break;
